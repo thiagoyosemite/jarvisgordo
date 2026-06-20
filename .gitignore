@@ -20,6 +20,9 @@ voz/
 !assets/
 !assets/megabrain.png
 
+# Memória pessoal do Thiago — não vai pro repo público.
+memory.json
+
 # Sistema
 .DS_Store
 Thumbs.db

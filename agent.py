@@ -22,6 +22,7 @@ except ImportError:
 
 import config
 from tools import TOOLS_SCHEMA, TOOLS_REGISTRY
+from memory import get_memory_text
 
 client = OpenAI(base_url=config.BASE_URL, api_key=config.API_KEY)
 
@@ -90,6 +91,16 @@ def responder(messages: list) -> str:
 
 def main() -> None:
     system_prompt = config.load_system_prompt()
+
+    # Injeta a memória de longo prazo (o que o Gordão já sabe sobre o Thiago).
+    memoria = get_memory_text()
+    if memoria:
+        system_prompt += (
+            "\n\nO QUE VOCÊ JÁ SABE SOBRE O THIAGO (memória de conversas anteriores):\n"
+            + memoria
+            + "\n(Use isso naturalmente, sem ficar listando que você 'lembrou'.)"
+        )
+
     messages = [{"role": "system", "content": system_prompt}]
 
     print("\033[1mJarvis Gordo — Fase 0\033[0m  (cérebro: %s @ %s)" % (config.MODEL, config.BASE_URL))

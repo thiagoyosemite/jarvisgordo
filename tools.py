@@ -12,6 +12,8 @@ Fase 2: busca na web REAL (web_search). Próximas: agenda real, e-mail, arquivos
 from datetime import datetime
 import random
 
+from memory import remember_fact
+
 
 def web_search(query: str, max_results: int = 5) -> str:
     """Busca real na web via DuckDuckGo (sem API key). Retorna títulos, trechos e links."""
@@ -93,6 +95,23 @@ TOOLS_SCHEMA = [
     {
         "type": "function",
         "function": {
+            "name": "remember",
+            "description": "Salva na memória de longo prazo um fato sobre o Thiago ou algo que ele pediu pra lembrar (preferências, nomes, projetos, gostos, etc.). Use quando ele contar algo que valha a pena lembrar nas próximas conversas.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "fact": {
+                        "type": "string",
+                        "description": "O fato a lembrar, em uma frase curta e clara.",
+                    }
+                },
+                "required": ["fact"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "get_current_time",
             "description": "Retorna a data e hora atuais. Use quando perguntarem que horas são ou que dia é hoje.",
             "parameters": {
@@ -146,6 +165,7 @@ TOOLS_SCHEMA = [
 # Mapa nome -> função, usado pelo loop do agente para despachar a chamada.
 TOOLS_REGISTRY = {
     "web_search": web_search,
+    "remember": remember_fact,
     "get_current_time": get_current_time,
     "get_fake_calendar": get_fake_calendar,
     "roll_dice": roll_dice,
