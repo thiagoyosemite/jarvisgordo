@@ -1,2 +1,4 @@
 openai>=1.30.0
 ddgs>=6.0.0
+fish-audio-sdk>=1.2.0
+eval_type_backport>=0.2.0 ; python_version < "3.10"

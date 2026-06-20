@@ -23,6 +23,7 @@ except ImportError:
 import config
 from tools import TOOLS_SCHEMA, TOOLS_REGISTRY
 from memory import get_memory_text
+from speak import speak, status as voice_status
 
 client = OpenAI(base_url=config.BASE_URL, api_key=config.API_KEY)
 
@@ -103,7 +104,8 @@ def main() -> None:
 
     messages = [{"role": "system", "content": system_prompt}]
 
-    print("\033[1mJarvis Gordo — Fase 0\033[0m  (cérebro: %s @ %s)" % (config.MODEL, config.BASE_URL))
+    print("\033[1mJarvis Gordo\033[0m  (cérebro: %s @ %s)" % (config.MODEL, config.BASE_URL))
+    print("\033[90m%s\033[0m" % voice_status())
     print("Digite e dê enter. Pra sair: /sair\n")
 
     while True:
@@ -128,6 +130,7 @@ def main() -> None:
             continue
 
         print(f"\033[92mGordão:\033[0m {saida}\n")
+        speak(saida)
 
 
 if __name__ == "__main__":
