@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Privacidade — material pessoal do Luiz NÃO vai pro repo público.
+# Áudios (para clonagem de voz) e fotos pessoais ficam locais.
+*.opus
+*.mp3
+*.wav
+*.m4a
+fotos/
+audios/
+voz/
+
+# Exceção: a imagem-herói "MegaBrain" é o avatar oficial e PODE ir.
+# Salve-a em assets/megabrain.png — ela não é ignorada.
+!assets/
+!assets/megabrain.png
+
+# Sistema
+.DS_Store
+Thumbs.db
