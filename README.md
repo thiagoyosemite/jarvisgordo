@@ -60,6 +60,7 @@ export GORDAO_MODEL="gemma-4-12B-it"
 
 Dentro do chat, experimente:
 
+- "Quem ganhou o último jogo do Palmeiras?" → deve chamar `web_search` (busca real na web).
 - "Que horas são?" → deve chamar `get_current_time`.
 - "O que tenho na agenda hoje?" → deve chamar `get_fake_calendar`.
 - "Rola um dado de 20." → deve chamar `roll_dice` com `sides=20`.

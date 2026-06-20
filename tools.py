@@ -1,16 +1,43 @@
 """
-Ferramentas (tools) do Jarvis Gordo — Fase 0.
+Ferramentas (tools) do Jarvis Gordo.
 
 Cada ferramenta tem:
   1. um SCHEMA (formato OpenAI/Gemma function calling) que o modelo enxerga;
   2. uma função Python que executa de verdade.
 
-Aqui ficam só ferramentas de TESTE, pra validar que o Gemma chama tool
-corretamente. Nas próximas fases entram agenda, e-mail, busca web, arquivos.
+Fase 0: ferramentas de teste (hora, agenda fake, dado).
+Fase 2: busca na web REAL (web_search). Próximas: agenda real, e-mail, arquivos.
 """
 
 from datetime import datetime
 import random
+
+
+def web_search(query: str, max_results: int = 5) -> str:
+    """Busca real na web via DuckDuckGo (sem API key). Retorna títulos, trechos e links."""
+    try:
+        try:
+            from ddgs import DDGS          # pacote novo
+        except ImportError:
+            from duckduckgo_search import DDGS  # nome antigo, fallback
+    except ImportError:
+        return ("[web_search indisponível] Falta a lib. Rode: "
+                "pip install ddgs")
+    try:
+        n = max(1, min(int(max_results), 8))
+        with DDGS() as ddgs:
+            resultados = list(ddgs.text(query, max_results=n))
+    except Exception as e:  # noqa: BLE001
+        return f"[erro na busca] {e}"
+    if not resultados:
+        return f"Nenhum resultado para: {query}"
+    linhas = []
+    for i, r in enumerate(resultados, 1):
+        titulo = r.get("title", "(sem título)")
+        corpo = (r.get("body") or "").strip().replace("\n", " ")
+        link = r.get("href") or r.get("url") or ""
+        linhas.append(f"{i}. {titulo}\n   {corpo}\n   {link}")
+    return "\n".join(linhas)
 
 # --- implementações reais ---------------------------------------------------
 
@@ -42,6 +69,27 @@ def roll_dice(sides: int = 6) -> str:
 # --- schemas que o modelo vê ------------------------------------------------
 
 TOOLS_SCHEMA = [
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "Busca na internet em tempo real. Use SEMPRE que precisar de fatos atuais, notícias, preços, resultados, ou qualquer coisa que você não saiba de cabeça ou que possa ter mudado. Não invente — busque.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "O que pesquisar, em linguagem natural.",
+                    },
+                    "max_results": {
+                        "type": "integer",
+                        "description": "Quantos resultados trazer (1 a 8). Padrão: 5.",
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
     {
         "type": "function",
         "function": {
@@ -97,6 +145,7 @@ TOOLS_SCHEMA = [
 
 # Mapa nome -> função, usado pelo loop do agente para despachar a chamada.
 TOOLS_REGISTRY = {
+    "web_search": web_search,
     "get_current_time": get_current_time,
     "get_fake_calendar": get_fake_calendar,
     "roll_dice": roll_dice,
